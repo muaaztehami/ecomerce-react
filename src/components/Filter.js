@@ -1,18 +1,20 @@
 import React, { Component } from 'react'
+import {connect} from 'react-redux'
+import {filterProducts, sortProducts} from '../redux/Product/productActions'
 
-export default class Filter extends Component {
+class Filter extends Component {
   render() {
     return (
       <div className="row">
         <div className="col-md-4">
-          {this.props.count} products found.
+          {this.props.filteredItems.length} products found.
         </div>
 
         <div className="col-md-4">
           <label>
             Order by
             <select className="form-control" value={this.props.sort}
-              onChange={this.props.handleChangeSort}>
+              onChange={(e) => this.props.sortProducts(this.props.filteredItems, e.target.value)}>
                 <option value="">Select</option>
                 <option value="lowest">Lowest to highest</option>
                 <option value="high">Highest to lowest</option>
@@ -24,7 +26,7 @@ export default class Filter extends Component {
           <label>
             Filter size
             <select className="form-control" value={this.props.size}
-              onChange={this.props.handleChangeSize}>
+              onChange={(e) => this.props.filterProducts(this.props.products, e.target.value)}>
                 <option value="">ALL</option>
                 <option value="xs">XS</option>
                 <option value="s">S</option>
@@ -42,3 +44,12 @@ export default class Filter extends Component {
     )
   }
 }
+const mapStateToProps = state => {
+  return {
+    products: state.products.items,
+    size: state.products.size,
+    filteredItems: state.products.filteredItems,
+    sort: state.products.sort
+  }
+}
+export default connect (mapStateToProps, {filterProducts, sortProducts})(Filter);
